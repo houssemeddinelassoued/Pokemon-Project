@@ -2,7 +2,7 @@ import { useLanguage, Language } from '@/i18n';
 import { Globe } from 'lucide-react';
 
 export const LanguageSwitch = () => {
-  const { language, setLanguage, t, dir } = useLanguage();
+  const { language, setLanguage, dir } = useLanguage();
 
   return (
     <div className={`flex items-center gap-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>

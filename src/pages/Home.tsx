@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, Sword, Activity, Info } from 'lucide-react';
-import { Pokemon, gen1Pokemon } from '@/data/pokemon';
+import { gen1Pokemon } from '@/data/pokemon';
 import { StatBar } from '@/components/StatBar';
 import { TypeBadge } from '@/components/TypeBadge';
 import { LanguageSwitch } from '@/components/LanguageSwitch';
