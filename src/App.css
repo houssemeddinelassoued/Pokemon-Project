@@ -32,8 +32,12 @@
 
 html {
   scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   @apply bg-gray-50 dark:bg-gray-900 transition-colors duration-200;
 }
