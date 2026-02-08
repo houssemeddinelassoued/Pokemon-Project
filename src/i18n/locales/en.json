@@ -1,0 +1,48 @@
+{
+  "common": {
+    "title": "Pokemon Battle Arena",
+    "subtitle": "Compare and Battle Legendary Pokemon",
+    "selectPokemon": "Select Pokemon",
+    "stats": "Combat Stats",
+    "info": "Description & Abilities",
+    "quickNote": "Quick Note",
+    "height": "Height",
+    "weight": "Weight",
+    "role": "Role",
+    "signature": "Signature Move",
+    "totalStats": "Base Stat Total",
+    "strengths": "Strengths",
+    "fightStyle": "Battle Style",
+    "pokedexDesc": "Pokedex Description",
+    "baseStatTotal": "Base Stat Total",
+    "language": "Language"
+  },
+  "stats": {
+    "hp": "Hit Points",
+    "attack": "Attack",
+    "defense": "Defense",
+    "spAtk": "Sp. Atk",
+    "spDef": "Sp. Def",
+    "speed": "Speed"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "grass": "Grass",
+    "electric": "Electric",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  }
+}

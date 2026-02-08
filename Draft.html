@@ -1,0 +1,330 @@
+import React, { useState } from 'react';
+import { Shield, Sword, Zap, Heart, Activity, Star, Clock, Sparkles, Target, Info } from 'lucide-react';
+
+// بيانات البوكيمونات
+const pokemonData = [
+  {
+    id: 151,
+    nameEn: "Mew",
+    nameAr: "ميو",
+    title: "بوكيمون الفصيلة الجديدة",
+    type: ["Psychic"],
+    desc: "يُقال إنه يمتلك التركيب الجيني لكل البوكيمونات. يمكنه جعل نفسه غير مرئي، لذلك نادراً ما يلاحظه الناس.",
+    stats: { hp: 100, attack: 100, defense: 100, spAtk: 100, spDef: 100, speed: 100 },
+    color: "from-pink-400 to-rose-400",
+    icon: Sparkles,
+    signature: "Psychic (ذهني)",
+    lore: "الجد الأول",
+    height: "0.4 م",
+    weight: "4.0 كجم"
+  },
+  {
+    id: 251,
+    nameEn: "Celebi",
+    nameAr: "سيلابي",
+    title: "بوكيمون السفر عبر الزمن",
+    type: ["Psychic", "Grass"],
+    desc: "بوكيمون جاء من المستقبل. طالما يظهر سيلابي، يُعتقد أن مستقبلًا مشرقًا ينتظرنا.",
+    stats: { hp: 100, attack: 100, defense: 100, spAtk: 100, spDef: 100, speed: 100 },
+    color: "from-green-400 to-emerald-500",
+    icon: Clock,
+    signature: "Time Travel (سفر عبر الزمن)",
+    lore: "حامي الغابة",
+    height: "0.6 م",
+    weight: "5.0 كجم"
+  },
+  {
+    id: 385,
+    nameEn: "Jirachi",
+    nameAr: "جيراشي",
+    title: "بوكيمون الأمنيات",
+    type: ["Steel", "Psychic"],
+    desc: "أسطورة تقول إنه يحقق أي أمنية مكتوبة على الملاحظات المرفقة برأسه عندما يستيقظ.",
+    stats: { hp: 100, attack: 100, defense: 100, spAtk: 100, spDef: 100, speed: 100 },
+    color: "from-yellow-300 to-amber-400",
+    icon: Star,
+    signature: "Doom Desire (رغبة الهلاك)",
+    lore: "محقق الأمنيات",
+    height: "0.3 م",
+    weight: "1.1 كجم"
+  },
+  {
+    id: 386,
+    nameEn: "Deoxys",
+    nameAr: "ديوكسيس",
+    title: "بوكيمون الحمض النووي",
+    type: ["Psychic"],
+    desc: "فيروس فضائي تعرض لأشعة الليزر وتحور ليصبح بوكيمون. يمتلك أشكالاً متعددة (هجوم، دفاع، سرعة).",
+    stats: { hp: 50, attack: 150, defense: 50, spAtk: 150, spDef: 50, speed: 150 }, // Normal Forme
+    color: "from-orange-500 to-red-600",
+    icon: Target,
+    signature: "Psycho Boost (الدفعة الذهنية)",
+    lore: "الفضائي المتحول",
+    height: "1.7 م",
+    weight: "60.8 كجم"
+  }
+];
+
+// مكون شريط الإحصائيات
+const StatBar = ({ label, value, colorClass, max = 160 }) => {
+  const percentage = (value / max) * 100;
+  return (
+    <div className="flex items-center gap-2 mb-2">
+      <span className="w-20 text-xs font-bold text-gray-600 dark:text-gray-300">{label}</span>
+      <div className="flex-1 h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div 
+          className={`h-full rounded-full transition-all duration-1000 ease-out ${colorClass}`}
+          style={{ width: `${percentage}%` }}
+        ></div>
+      </div>
+      <span className="w-8 text-xs font-bold text-right text-gray-700 dark:text-gray-200">{value}</span>
+    </div>
+  );
+};
+
+// مكون شارة النوع
+const TypeBadge = ({ type }) => {
+  const colors = {
+    Psychic: "bg-pink-500",
+    Grass: "bg-green-500",
+    Steel: "bg-gray-400",
+    Fire: "bg-red-500",
+    Water: "bg-blue-500",
+    Electric: "bg-yellow-400 text-black",
+  };
+  
+  const translations = {
+    Psychic: "ذهني",
+    Grass: "عشبي",
+    Steel: "حديدي",
+    Fire: "ناري",
+    Water: "مائي",
+    Electric: "كهربائي"
+  };
+
+  return (
+    <span className={`${colors[type] || 'bg-gray-500'} text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm`}>
+      {translations[type] || type}
+    </span>
+  );
+};
+
+// التطبيق الرئيسي
+export default function App() {
+  const [selectedId, setSelectedId] = useState(151);
+  const [activeTab, setActiveTab] = useState('stats'); // 'stats' or 'info'
+
+  const currentPokemon = pokemonData.find(p => p.id === selectedId);
+
+  // حساب المجموع الكلي للإحصائيات
+  const totalStats = Object.values(currentPokemon.stats).reduce((a, b) => a + b, 0);
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-100 p-4 md:p-8" dir="rtl">
+      
+      {/* رأس الصفحة */}
+      <header className="max-w-4xl mx-auto mb-8 text-center">
+        <h1 className="text-3xl md:text-5xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+          صراع الأساطير
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400">مقارنة تحليلية شاملة: ميو، سيلابي، جيراشي، وديوكسيس</p>
+      </header>
+
+      <main className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* قائمة الاختيار - الجانب الأيمن */}
+        <div className="lg:col-span-4 flex flex-col gap-4">
+          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-500" />
+            اختر البوكيمون
+          </h2>
+          {pokemonData.map((poke) => (
+            <button
+              key={poke.id}
+              onClick={() => setSelectedId(poke.id)}
+              className={`relative overflow-hidden group p-4 rounded-2xl transition-all duration-300 border-2 flex items-center gap-4 text-right
+                ${selectedId === poke.id 
+                  ? 'border-blue-500 bg-white dark:bg-gray-800 shadow-lg scale-105' 
+                  : 'border-transparent bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 hover:shadow-md'
+                }`}
+            >
+              <div className={`absolute inset-0 opacity-10 bg-gradient-to-r ${poke.color}`}></div>
+              <img 
+                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${poke.id}.png`}
+                alt={poke.nameEn}
+                className="w-16 h-16 object-contain z-10 drop-shadow-md group-hover:scale-110 transition-transform"
+              />
+              <div className="z-10">
+                <h3 className="font-bold text-lg">{poke.nameAr}</h3>
+                <span className="text-xs text-gray-500 uppercase tracking-wider">{poke.nameEn}</span>
+              </div>
+              {selectedId === poke.id && (
+                <div className="mr-auto text-blue-500">
+                  <Info size={20} />
+                </div>
+              )}
+            </button>
+          ))}
+          
+          <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800/50">
+            <h4 className="font-bold text-sm mb-2 text-blue-700 dark:text-blue-300">ملاحظة سريعة:</h4>
+            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+              جميع هذه البوكيمونات تعتبر "خرافية" (Mythical). ميو وسيلابي وجيراشي يتشاركون في توزيع إحصائيات متوازن (100 في كل شيء)، بينما ديوكسيس يتميز بتطرف إحصائياته (هجوم وسرعة فائقة مقابل دفاع ضعيف).
+            </p>
+          </div>
+        </div>
+
+        {/* بطاقة العرض الرئيسية - الجانب الأيسر */}
+        <div className="lg:col-span-8">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700 relative">
+            
+            {/* خلفية جمالية */}
+            <div className={`absolute top-0 inset-x-0 h-48 bg-gradient-to-b ${currentPokemon.color} opacity-20`}></div>
+            
+            <div className="relative p-6 md:p-8">
+              
+              {/* الرأس العلوي للبطاقة */}
+              <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 mb-8">
+                <div className="relative">
+                   <div className="absolute -inset-4 bg-gradient-to-r from-white/0 via-white/50 to-white/0 dark:via-white/10 blur-xl rounded-full"></div>
+                   <img 
+                    key={currentPokemon.id}
+                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`}
+                    alt={currentPokemon.nameEn}
+                    className="w-48 h-48 md:w-56 md:h-56 object-contain drop-shadow-2xl animate-float"
+                    style={{ animation: 'float 6s ease-in-out infinite' }}
+                  />
+                </div>
+                
+                <div className="text-center md:text-right flex-1">
+                  <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                    <h2 className="text-4xl font-black text-gray-800 dark:text-white">{currentPokemon.nameAr}</h2>
+                    <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs font-mono text-gray-500">#{currentPokemon.id}</span>
+                  </div>
+                  <p className="text-lg font-medium text-gray-500 mb-4">{currentPokemon.title}</p>
+                  
+                  <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-6">
+                    {currentPokemon.type.map(t => <TypeBadge key={t} type={t} />)}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-sm bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl">
+                    <div>
+                      <span className="block text-gray-400 text-xs">الطول</span>
+                      <span className="font-bold">{currentPokemon.height}</span>
+                    </div>
+                    <div>
+                      <span className="block text-gray-400 text-xs">الوزن</span>
+                      <span className="font-bold">{currentPokemon.weight}</span>
+                    </div>
+                    <div>
+                      <span className="block text-gray-400 text-xs">الدور</span>
+                      <span className="font-bold">{currentPokemon.lore}</span>
+                    </div>
+                    <div>
+                      <span className="block text-gray-400 text-xs">الحركة المميزة</span>
+                      <span className="font-bold text-blue-500">{currentPokemon.signature}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* أزرار التبويب */}
+              <div className="flex gap-4 border-b border-gray-200 dark:border-gray-700 mb-6">
+                <button 
+                  onClick={() => setActiveTab('stats')}
+                  className={`pb-3 text-sm font-bold transition-colors relative ${activeTab === 'stats' ? 'text-blue-500' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  <span className="flex items-center gap-2"><Activity size={16}/> الإحصائيات القتالية</span>
+                  {activeTab === 'stats' && <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-500"></span>}
+                </button>
+                <button 
+                  onClick={() => setActiveTab('info')}
+                  className={`pb-3 text-sm font-bold transition-colors relative ${activeTab === 'info' ? 'text-blue-500' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  <span className="flex items-center gap-2"><Info size={16}/> الوصف والقدرات</span>
+                  {activeTab === 'info' && <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-500"></span>}
+                </button>
+              </div>
+
+              {/* محتوى التبويب */}
+              <div className="min-h-[250px]">
+                {activeTab === 'stats' ? (
+                  <div className="animate-fadeIn">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                      <StatBar label="نقاط الصحة (HP)" value={currentPokemon.stats.hp} colorClass="bg-red-500" />
+                      <StatBar label="الهجوم (Attack)" value={currentPokemon.stats.attack} colorClass="bg-orange-500" />
+                      <StatBar label="الدفاع (Defense)" value={currentPokemon.stats.defense} colorClass="bg-yellow-500" />
+                      <StatBar label="السرعة (Speed)" value={currentPokemon.stats.speed} colorClass="bg-teal-500" />
+                      <StatBar label="هجوم خاص (Sp. Atk)" value={currentPokemon.stats.spAtk} colorClass="bg-blue-500" />
+                      <StatBar label="دفاع خاص (Sp. Def)" value={currentPokemon.stats.spDef} colorClass="bg-green-500" />
+                    </div>
+                    
+                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl flex justify-between items-center">
+                      <span className="font-bold text-gray-500">المجموع الكلي (Base Stat Total)</span>
+                      <span className="text-2xl font-black text-gray-800 dark:text-white">{totalStats}</span>
+                    </div>
+
+                    {currentPokemon.id === 386 && (
+                      <p className="mt-2 text-xs text-red-400 text-center">
+                        * إحصائيات ديوكسيس المعروضة هي للشكل العادي (Normal Forme). هذا البوكيمون يمتلك أعلى تباين في الإحصائيات بين الأربعة.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="animate-fadeIn space-y-4">
+                     <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border-r-4 border-blue-500">
+                        <h4 className="font-bold mb-2 text-blue-700 dark:text-blue-300">الوصف في البوكيدكس</h4>
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {currentPokemon.desc}
+                        </p>
+                     </div>
+                     
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                          <h4 className="font-bold text-sm text-gray-500 mb-2 flex items-center gap-2">
+                            <Shield className="w-4 h-4"/>
+                            نقاط القوة
+                          </h4>
+                          <ul className="text-sm list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
+                            {currentPokemon.type.includes("Steel") 
+                              ? <li>مقاومة عالية جداً لمعظم الأنواع</li> 
+                              : <li>تنوع هجومي واسع</li>}
+                            {currentPokemon.stats.speed >= 100 && <li>سرعة ممتازة تسبق معظم الخصوم</li>}
+                            {currentPokemon.stats.hp >= 100 && <li>قدرة تحمل عالية في المعارك الطويلة</li>}
+                          </ul>
+                        </div>
+                        <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                          <h4 className="font-bold text-sm text-gray-500 mb-2 flex items-center gap-2">
+                            <Sword className="w-4 h-4"/>
+                            أسلوب القتال
+                          </h4>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                             {currentPokemon.id === 386 ? "هجومي بحت (Glass Cannon)" : "متوازن وداعم (Balanced/Support)"}
+                          </p>
+                        </div>
+                     </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+      
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
